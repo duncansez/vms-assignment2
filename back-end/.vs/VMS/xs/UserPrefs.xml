@@ -1,0 +1,29 @@
+﻿<Properties StartupConfiguration="{3D029259-1BDB-446E-8CA7-985476C9347E}|http">
+  <MonoDevelop.Ide.ItemProperties.VMSAPI PreferredExecutionTarget="/Applications/Opera.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="EP2Bv2Id/Models/ExtendedIdentityContext.cs">
+    <Files>
+      <File FileName="EP2Bv2Id/Models/ExtendedIdentityContext.cs" Line="1" Column="12" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="VMS" expanded="True" selected="True">
+            <Node name="VMSAPI" expanded="True" />
+            <Node name="VMSId" expanded="True">
+              <Node name="Models" expanded="True" />
+            </Node>
+            <Node name="VMSMain" expanded="True">
+              <Node name="Models" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+</Properties>
