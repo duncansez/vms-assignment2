@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VMS.Models;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using VMS.Repositories; // Assuming you have a repository class for vehicle operations
 
 namespace VMS.Controllers
 {
@@ -14,94 +12,75 @@ namespace VMS.Controllers
     [Route("api/[controller]")]
     public class VehicleController : ControllerBase
     {
-        private readonly VMSDbContext _context;
+        private readonly IVehicleRepository _vehicleRepository;
 
-        public VehicleController(VMSDbContext context)
+        public VehicleController(IVehicleRepository vehicleRepository)
         {
-            _context = context;
+            _vehicleRepository = vehicleRepository;
         }
 
-        // GET: api/vehicle
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vehicle>>> GetVehicles()
         {
-            return await _context.Vehicle.ToListAsync();
+            var vehicles = await _vehicleRepository.GetAllVehiclesAsync();
+            return Ok(vehicles);
         }
 
-        // GET: api/vehicle/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<Vehicle>> GetVehicle(int id)
         {
-            var vehicle = await _context.Vehicle.FindAsync(id);
+            var vehicle = await _vehicleRepository.GetVehicleByIdAsync(id);
 
             if (vehicle == null)
             {
                 return NotFound();
             }
 
-            return vehicle;
+            return Ok(vehicle);
         }
 
-        // POST: api/vehicle
         [HttpPost]
-        public async Task<ActionResult<Vehicle>> CreateVehicle(Vehicle vehicle)
+        public async Task<IActionResult> CreateVehicle(Vehicle vehicle)
         {
-            _context.Vehicle.Add(vehicle);
-            await _context.SaveChangesAsync();
+            var createdVehicle = await _vehicleRepository.CreateVehicleAsync(vehicle);
 
-            return CreatedAtAction("GetVehicle", new { id = vehicle.Id }, vehicle);
+            if (createdVehicle == null)
+            {
+                return BadRequest("Failed to create vehicle.");
+            }
+
+            return CreatedAtAction(nameof(GetVehicle), new { id = createdVehicle.Id }, createdVehicle);
         }
 
-        // PUT: api/vehicle/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVehicle(int id, Vehicle vehicle)
         {
             if (id != vehicle.Id)
             {
-                return BadRequest();
+                return BadRequest("Vehicle ID mismatch.");
             }
 
-            _context.Entry(vehicle).State = EntityState.Modified;
+            var updatedVehicle = await _vehicleRepository.UpdateVehicleAsync(vehicle);
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!VehicleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // DELETE: api/vehicle/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteVehicle(int id)
-        {
-            var vehicle = await _context.Vehicle.FindAsync(id);
-            if (vehicle == null)
+            if (updatedVehicle == null)
             {
                 return NotFound();
             }
 
-            _context.Vehicle.Remove(vehicle);
-            await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        private bool VehicleExists(int id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteVehicle(int id)
         {
-            return _context.Vehicle.Any(v => v.Id == id);
+            var deletedVehicle = await _vehicleRepository.DeleteVehicleAsync(id);
+
+            if (deletedVehicle == null)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
     }
 }
-

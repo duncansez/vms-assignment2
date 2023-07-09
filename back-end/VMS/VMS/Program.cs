@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.OpenApi.Models;
 using VMS.Models;
+using VMS.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +28,20 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("V2", new OpenApiInfo
+    {
+        Version = "V2",
+        Title = "VMS Refactoring",
+        Description = "Vehicle Management System - Service WebAPI"
+    });    
+});
+
+//add new VehicleRepository
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+
 
 var app = builder.Build();
 
@@ -35,7 +50,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    //app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("../swagger/V2/swagger.json", "Product WebAPI");
+    });
 }
 
 app.UseHttpsRedirection();
